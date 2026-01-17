@@ -37,3 +37,10 @@ Notes
 - This is a demo scaffold. Adapt and harden for production use (timeouts, retries, logging, thread-safety, tests).
 - The error codes mapping is a placeholder in `lib/open_api/error_codes.rb`.
 - The WebSocket implementation uses `websocket-client-simple`. Replace with an alternative if you need async Reactor-based code.
+
+
+### References
+
+1. [https://openapidoc.bitunix.com/doc/common/sign.html](https://openapidoc.bitunix.com/)
+2. https://www.bitunix.com/contract-trade/BTCUSDT
+3. https://github.com/BitunixOfficial/open-api/tree/main/Demo/Python
