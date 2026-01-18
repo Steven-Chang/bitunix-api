@@ -36,6 +36,17 @@ module Bitunix
         handle_response(response)
       end
 
+      # https://openapidoc.bitunix.com/doc/market/get_trading_pairs.html
+      def get_trading_pairs(symbols = nil)
+        url = "/api/v1/futures/market/trading_pairs"
+        params = {}
+        params["symbols"] = symbols if symbols
+        query_string = Sign.sort_params(params)
+        headers = Sign.get_auth_headers(query_params: query_string)
+        response = @conn.get(url, params, headers)
+        handle_response(response)
+      end
+
       def get_depth(symbol, limit = 100)
         url = "/api/v1/futures/market/depth"
         params = {"symbol" => symbol, "limit" => limit}
