@@ -72,6 +72,15 @@ module Bitunix
         handle_response(response)
       end
 
+      def change_leverage(symbol, leverage, margin_coin: 'USDT')
+        url = "/api/v1/futures/account/change_leverage"
+        data = {"symbol" => symbol, "leverage" => leverage, "marginCoin" => margin_coin}
+        body = JSON.generate(data)
+        headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
+        response = @conn.post(url, data, headers)
+        handle_response(response)
+      end
+
       def get_history_orders(symbol = nil)
         url = "/api/v1/futures/trade/get_history_orders"
         params = {}
