@@ -33,7 +33,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "websocket-eventmachine-client", "~> 1.3.0"
-  spec.add_dependency "faraday", "~> 0.15"
+  # Faraday 2 moved HTTP adapters into separate gems; we depend on the
+  # Net::HTTP adapter so `Faraday.default_adapter` works with Faraday 2.
+  spec.add_dependency "faraday", ">= 2.0", "< 3.0"
+  spec.add_dependency "faraday-net_http", "~> 3.0"
   spec.add_dependency "open_api", "~> 0.6.2"
   spec.add_dependency "websocket-client-simple", "~> 0.4"
   spec.add_dependency "json", "~> 2.18.0"
