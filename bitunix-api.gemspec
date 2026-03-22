@@ -39,7 +39,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "faraday-net_http", "~> 3.0"
   spec.add_dependency "open_api", "~> 0.6.2"
   spec.add_dependency "websocket-client-simple", "~> 0.4"
-  spec.add_dependency "json", "~> 2.18.0"
+  spec.add_dependency "json", "~> 2.19.2"
 
   spec.add_development_dependency "rake", "~> 13.3.1"
   spec.add_development_dependency "rspec",  "~> 3.0"
