@@ -4,13 +4,19 @@ require "json"
 module Bitunix
   module Rest
     class FuturePrivate < FuturePublic
-      def initialize(api_key, secret_key)
-        @api_key = api_key
-        @secret_key = secret_key
-        @base_url = "https://fapi.bitunix.com"
+      def initialize(config_or_api_key, secret_key = nil)
+        if config_or_api_key.respond_to?(:api_key) && config_or_api_key.respond_to?(:secret_key)
+          @api_key = config_or_api_key.api_key
+          @secret_key = config_or_api_key.secret_key
+          @base_url = config_or_api_key.uri_prefix || "https://fapi.bitunix.com"
+        else
+          @api_key = config_or_api_key
+          @secret_key = secret_key
+          @base_url = "https://fapi.bitunix.com"
+        end
+
         @conn = Faraday.new(url: @base_url) do |f|
           f.request :json
-          f.response :raise_error
           f.adapter Faraday.default_adapter
         end
       end

@@ -4,10 +4,10 @@ require "json"
 module Bitunix
   module Rest
     class FuturePublic
-      def initialize
-        @conn = Faraday.new(url: "https://fapi.bitunix.com") do |f|
+      def initialize(config = nil)
+        base_url = config&.uri_prefix || "https://fapi.bitunix.com"
+        @conn = Faraday.new(url: base_url) do |f|
           f.request :json
-          f.response :raise_error
           f.adapter Faraday.default_adapter
         end
       end
@@ -32,7 +32,7 @@ module Bitunix
         params["symbols"] = symbols if symbols
         query_string = Sign.sort_params(params)
         headers = Sign.get_auth_headers(query_params: query_string)
-        response = @conn.get(url, params, headers)
+        response = @conn.get(url, {}, headers)
         handle_response(response)
       end
 

@@ -37,7 +37,6 @@ Gem::Specification.new do |spec|
   # Net::HTTP adapter so `Faraday.default_adapter` works with Faraday 2.
   spec.add_dependency "faraday", ">= 2.0", "< 3.0"
   spec.add_dependency "faraday-net_http", "~> 3.0"
-  spec.add_dependency "open_api", "~> 0.6.2"
   spec.add_dependency "websocket-client-simple", "~> 0.4"
   spec.add_dependency "json", "~> 2.19.2"
 

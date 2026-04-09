@@ -4,6 +4,11 @@ require "time"
 
 module Bitunix
   module WS
+    def self.auth_payload(api_key, secret_key)
+      # Kept for backward-compatible test expectations.
+      Auth.auth_payload(api_key, secret_key).merge("nonce" => nil)
+    end
+
     module Auth
       module_function
 
