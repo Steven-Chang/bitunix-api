@@ -20,9 +20,7 @@ RSpec.describe Bitunix::WS::FuturePrivate do
 
   after do
     # ensure we don't leave EM running in case any test started it
-    if defined?(EventMachine) && EventMachine.reactor_running?
-      EventMachine.stop_event_loop
-    end
+    EventMachine.stop_event_loop if defined?(EventMachine) && EventMachine.reactor_running?
   end
 
   describe ".auth_payload" do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "securerandom"
 require "digest"
 
@@ -28,7 +30,8 @@ module Bitunix
       def get_auth_headers(api_key: nil, secret_key: nil, query_params: "", body: "")
         nonce = get_nonce
         timestamp = get_timestamp_ms
-        sign = generate_signature(api_key: api_key, secret_key: secret_key, nonce: nonce, timestamp: timestamp, query_params: query_params, body: body)
+        sign = generate_signature(api_key: api_key, secret_key: secret_key, nonce: nonce, timestamp: timestamp,
+                                  query_params: query_params, body: body)
         {
           "api-key" => api_key,
           "sign" => sign,
@@ -39,6 +42,7 @@ module Bitunix
 
       def sort_params(params)
         return "" if params.nil? || params.empty?
+
         params.sort.to_h.map { |k, v| "#{k}#{v}" }.join
       end
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "faraday"
 require "json"
 
@@ -22,14 +24,12 @@ module Bitunix
       end
 
       def handle_response(response)
-        unless response.status == 200
-          raise "HTTP Error: #{response.status}"
-        end
+        raise "HTTP Error: #{response.status}" unless response.status == 200
 
         data = JSON.parse(response.body)
         if data["code"] != 0
           error = ErrorCode.get_by_code(data["code"])
-          raise error || "Unknown Error: #{data['code']} - #{data['msg']}"
+          raise error || "Unknown Error: #{data["code"]} - #{data["msg"]}"
         end
 
         data["data"]
@@ -37,14 +37,15 @@ module Bitunix
 
       def get_account(margin_coin = "USDT")
         url = "/api/v1/futures/account"
-        params = {"marginCoin" => margin_coin}
+        params = { "marginCoin" => margin_coin }
         query_string = Sign.sort_params(params)
         headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, query_params: query_string)
         response = @conn.get(url, params, headers)
         handle_response(response)
       end
 
-      def place_order(symbol:, side:, order_type:, qty:, price: nil, position_id: nil, trade_side: "OPEN", effect: "GTC", reduce_only: false, client_id: nil, tp_price: nil, tp_stop_type: nil, tp_order_type: nil, tp_order_price: nil)
+      def place_order(symbol:, side:, order_type:, qty:, price: nil, position_id: nil, trade_side: "OPEN",
+                      effect: "GTC", reduce_only: false, client_id: nil, tp_price: nil, tp_stop_type: nil, tp_order_type: nil, tp_order_price: nil)
         url = "/api/v1/futures/trade/place_order"
         data = {
           "symbol" => symbol,
@@ -71,16 +72,16 @@ module Bitunix
 
       def cancel_orders(symbol:, order_list:)
         url = "/api/v1/futures/trade/cancel_orders"
-        data = {"symbol" => symbol, "orderList" => order_list}
+        data = { "symbol" => symbol, "orderList" => order_list }
         body = JSON.generate(data)
         headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
         response = @conn.post(url, data, headers)
         handle_response(response)
       end
 
-      def change_leverage(symbol, leverage, margin_coin: 'USDT')
+      def change_leverage(symbol, leverage, margin_coin: "USDT")
         url = "/api/v1/futures/account/change_leverage"
-        data = {"symbol" => symbol, "leverage" => leverage, "marginCoin" => margin_coin}
+        data = { "symbol" => symbol, "leverage" => leverage, "marginCoin" => margin_coin }
         body = JSON.generate(data)
         headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
         response = @conn.post(url, data, headers)

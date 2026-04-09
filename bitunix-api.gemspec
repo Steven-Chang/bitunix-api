@@ -37,11 +37,11 @@ Gem::Specification.new do |spec|
   # Net::HTTP adapter so `Faraday.default_adapter` works with Faraday 2.
   spec.add_dependency "faraday", ">= 2.0", "< 3.0"
   spec.add_dependency "faraday-net_http", "~> 3.0"
-  spec.add_dependency "websocket-client-simple", "~> 0.4"
   spec.add_dependency "json", "~> 2.19.2"
+  spec.add_dependency "websocket-client-simple", "~> 0.4"
 
   spec.add_development_dependency "rake", "~> 13.3.1"
-  spec.add_development_dependency "rspec",  "~> 3.0"
+  spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rubocop", "~> 1.21"
   spec.add_development_dependency "webmock", "~> 3.26.1"
 end

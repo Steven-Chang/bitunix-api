@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "json"
-require "thread"
 require "eventmachine"
 require "websocket-eventmachine-client"
 require_relative "auth"
@@ -49,15 +48,27 @@ module Bitunix
       end
 
       # Callback registration
-      def on_message(&block); @on_message_block = block; end
-      def on_open(&block);    @on_open_block = block;    end
-      def on_close(&block);   @on_close_block = block;   end
-      def on_error(&block);   @on_error_block = block;   end
+      def on_message(&block)
+        @on_message_block = block
+      end
+
+      def on_open(&block)
+        @on_open_block = block
+      end
+
+      def on_close(&block)
+        @on_close_block = block
+      end
+
+      def on_error(&block)
+        @on_error_block = block
+      end
 
       # Start connection (and EM if needed)
       def connect
         @mutex.synchronize do
           return if @connected || connecting?
+
           start_em_unless_running
           schedule_connect
         end
@@ -90,7 +101,7 @@ module Bitunix
 
           if @started_em_here && EventMachine.reactor_running?
             EventMachine.stop_event_loop
-            @em_thread.join if @em_thread
+            @em_thread&.join
             @em_thread = nil
             @started_em_here = false
           end
@@ -119,7 +130,7 @@ module Bitunix
 
       def schedule_connect(delay = 0)
         EventMachine.next_tick do
-          if delay > 0
+          if delay.positive?
             @reconnect_timer = EventMachine.add_timer(delay) { do_connect }
           else
             do_connect
@@ -183,8 +194,13 @@ module Bitunix
 
       def drain_send_queue
         until @send_queue.empty?
-          json = @send_queue.pop(true) rescue nil
+          json = begin
+            @send_queue.pop(true)
+          rescue StandardError
+            nil
+          end
           break unless json
+
           begin
             @ws.send json
           rescue StandardError => e
@@ -203,53 +219,50 @@ module Bitunix
       end
 
       def handle_message(raw)
-        begin
-          data = JSON.parse(raw)
-          return if data["op"] == "ping"
-          if @on_message_block
-            @on_message_block.call(data)
-          else
-            puts "Received: #{data}"
-          end
-        rescue JSON::ParserError
-          warn "Invalid JSON message"
-        rescue StandardError => e
-          warn "Error handling message: #{e}"
+        data = JSON.parse(raw)
+        return if data["op"] == "ping"
+
+        if @on_message_block
+          @on_message_block.call(data)
+        else
+          puts "Received: #{data}"
         end
+      rescue JSON::ParserError
+        warn "Invalid JSON message"
+      rescue StandardError => e
+        warn "Error handling message: #{e}"
       end
 
       def start_ping_timer
         cancel_ping_timer
         @ping_timer = EventMachine.add_periodic_timer(@heartbeat_interval) do
-          begin
-            send_payload(op: "ping", ping: Time.now.to_i)
-          rescue StandardError => e
-            warn "Ping failed: #{e}"
-          end
+          send_payload(op: "ping", ping: Time.now.to_i)
+        rescue StandardError => e
+          warn "Ping failed: #{e}"
         end
       end
 
       def cancel_ping_timer
-        if @ping_timer
-          begin
-            @ping_timer.cancel
-          rescue StandardError
-            # ignore
-          ensure
-            @ping_timer = nil
-          end
+        return unless @ping_timer
+
+        begin
+          @ping_timer.cancel
+        rescue StandardError
+          # ignore
+        ensure
+          @ping_timer = nil
         end
       end
 
       def cancel_reconnect_timer
-        if @reconnect_timer
-          begin
-            @reconnect_timer.cancel
-          rescue StandardError
-            # ignore
-          ensure
-            @reconnect_timer = nil
-          end
+        return unless @reconnect_timer
+
+        begin
+          @reconnect_timer.cancel
+        rescue StandardError
+          # ignore
+        ensure
+          @reconnect_timer = nil
         end
       end
     end

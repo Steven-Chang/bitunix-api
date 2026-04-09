@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "faraday"
 require "json"
 
@@ -13,14 +15,12 @@ module Bitunix
       end
 
       def handle_response(response)
-        unless response.status == 200
-          raise "HTTP Error: #{response.status}"
-        end
+        raise "HTTP Error: #{response.status}" unless response.status == 200
 
         data = JSON.parse(response.body)
         if data["code"] != 0
           error = ErrorCode.get_by_code(data["code"])
-          raise error || "Unknown Error: #{data['code']} - #{data['msg']}"
+          raise error || "Unknown Error: #{data["code"]} - #{data["msg"]}"
         end
 
         data["data"]
@@ -49,7 +49,7 @@ module Bitunix
 
       def get_depth(symbol, limit = 100)
         url = "/api/v1/futures/market/depth"
-        params = {"symbol" => symbol, "limit" => limit}
+        params = { "symbol" => symbol, "limit" => limit }
         query_string = Sign.sort_params(params)
         headers = Sign.get_auth_headers(query_params: query_string)
         response = @conn.get(url, params, headers)
@@ -58,7 +58,7 @@ module Bitunix
 
       def get_kline(symbol:, interval:, limit: 100, start_time: nil, end_time: nil, type: "LAST_PRICE")
         url = "/api/v1/futures/market/kline"
-        params = {"symbol" => symbol, "interval" => interval, "limit" => limit, "type" => type}
+        params = { "symbol" => symbol, "interval" => interval, "limit" => limit, "type" => type }
         params["startTime"] = start_time if start_time
         params["endTime"] = end_time if end_time
         query_string = Sign.sort_params(params)
