@@ -70,6 +70,16 @@ module Bitunix
         handle_response(response)
       end
 
+      # https://www.bitunix.com/api-docs/futures/trade/cancel_all_orders.html
+      def cancel_all_orders(symbol: nil)
+        url = "/api/v1/futures/trade/cancel_all_orders"
+        data = { "symbol" => symbol }
+        body = JSON.generate(data)
+        headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
+        response = @conn.post(url, data, headers)
+        handle_response(response)
+      end
+
       def cancel_orders(symbol:, order_list:)
         url = "/api/v1/futures/trade/cancel_orders"
         data = { "symbol" => symbol, "orderList" => order_list }
