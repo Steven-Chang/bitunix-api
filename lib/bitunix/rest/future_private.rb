@@ -117,6 +117,17 @@ module Bitunix
         response = @conn.get(url, params, headers)
         handle_response(response)
       end
+
+      def get_pending_positions(symbol: nil, position_id: nil)
+        url = "/api/v1/futures/position/get_pending_positions"
+        params = {}
+        params["symbol"] = symbol if symbol
+        params["positionId"] = position_id if position_id
+        query_string = Sign.sort_params(params)
+        headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, query_params: query_string)
+        response = @conn.get(url, params, headers)
+        handle_response(response)
+      end
     end
   end
 end
