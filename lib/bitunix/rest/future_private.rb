@@ -108,10 +108,13 @@ module Bitunix
         handle_response(response)
       end
 
-      def get_history_positions(symbol = nil)
+      def get_history_positions(symbol: nil, position_id: nil, start_time: nil, end_time: nil, skip: 0, limit: 100)
         url = "/api/v1/futures/position/get_history_positions"
-        params = {}
+        params = { skip:, limit: }
         params["symbol"] = symbol if symbol
+        params["positionId"] = position_id if position_id
+        params["startTime"] = start_time if start_time
+        params["endTime"] = end_time if end_time
         query_string = Sign.sort_params(params)
         headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, query_params: query_string)
         response = @conn.get(url, params, headers)
