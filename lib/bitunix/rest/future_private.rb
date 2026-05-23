@@ -101,7 +101,7 @@ module Bitunix
       def get_history_orders(symbol = nil)
         url = "/api/v1/futures/trade/get_history_orders"
         params = {}
-        params["symbol"] = symbol if symbol
+        params[:symbol] = symbol if symbol
         query_string = Sign.sort_params(params)
         headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, query_params: query_string)
         response = @conn.get(url, params, headers)
@@ -111,21 +111,27 @@ module Bitunix
       def get_history_positions(symbol: nil, position_id: nil, start_time: nil, end_time: nil, skip: 0, limit: 100)
         url = "/api/v1/futures/position/get_history_positions"
         params = { skip:, limit: }
-        params["symbol"] = symbol if symbol
-        params["positionId"] = position_id if position_id
-        params["startTime"] = start_time if start_time
-        params["endTime"] = end_time if end_time
+        params[:symbol] = symbol if symbol
+        params[:positionId] = position_id if position_id
+        params[:startTime] = start_time if start_time
+        params[:endTime] = end_time if end_time
+        puts params
         query_string = Sign.sort_params(params)
+        puts params
         headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, query_params: query_string)
+        puts headers
+        puts 3
         response = @conn.get(url, params, headers)
+        puts 4
+        puts response
         handle_response(response)
       end
 
       def get_pending_positions(symbol: nil, position_id: nil)
         url = "/api/v1/futures/position/get_pending_positions"
         params = {}
-        params["symbol"] = symbol if symbol
-        params["positionId"] = position_id if position_id
+        params[:symbol] = symbol if symbol
+        params[:positionId] = position_id if position_id
         query_string = Sign.sort_params(params)
         headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, query_params: query_string)
         response = @conn.get(url, params, headers)
