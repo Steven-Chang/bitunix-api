@@ -115,15 +115,9 @@ module Bitunix
         params[:positionId] = position_id if position_id
         params[:startTime] = start_time if start_time
         params[:endTime] = end_time if end_time
-        puts params
         query_string = Sign.sort_params(params)
-        puts params
         headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, query_params: query_string)
-        puts headers
-        puts 3
         response = @conn.get(url, params, headers)
-        puts 4
-        puts response
         handle_response(response)
       end
 
