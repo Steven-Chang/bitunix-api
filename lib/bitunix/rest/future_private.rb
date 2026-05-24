@@ -98,6 +98,16 @@ module Bitunix
         handle_response(response)
       end
 
+      # https://www.bitunix.com/api-docs/futures/account/change_position_mode.html
+      def change_position_mode(position_mode)
+        url = "/api/v1/futures/account/change_position_mode"
+        data = { "positionMode" => position_mode }
+        body = JSON.generate(data)
+        headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
+        response = @conn.post(url, data, headers)
+        handle_response(response)
+      end
+
       def get_history_orders(symbol = nil)
         url = "/api/v1/futures/trade/get_history_orders"
         params = {}
