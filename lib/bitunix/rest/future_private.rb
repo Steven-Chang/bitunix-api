@@ -141,6 +141,16 @@ module Bitunix
         handle_response(response)
       end
 
+      def get_pending_orders(symbol: nil, skip: 0, limit: 100)
+        url = "/api/v1/futures/trade/get_pending_orders"
+        params = { skip:, limit: }
+        params[:symbol] = symbol if symbol
+        query_string = Sign.sort_params(params)
+        headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, query_params: query_string)
+        response = @conn.get(url, params, headers)
+        handle_response(response)
+      end
+
       def get_pending_positions(symbol: nil, position_id: nil)
         url = "/api/v1/futures/position/get_pending_positions"
         params = {}
