@@ -35,6 +35,20 @@ module Bitunix
         data["data"]
       end
 
+      # https://www.bitunix.com/api-docs/futures/trade/batch_order.html
+      def batch_order(symbol, order_list)
+        url = "/api/v1/futures/trade/batch_order"
+        data = {
+          "symbol" => symbol,
+          "orderList" => order_list
+        }
+
+        body = JSON.generate(data)
+        headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
+        response = @conn.post(url, data, headers)
+        handle_response(response)
+      end
+
       def get_account(margin_coin = "USDT")
         url = "/api/v1/futures/account"
         params = { "marginCoin" => margin_coin }
