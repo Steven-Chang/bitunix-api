@@ -113,6 +113,16 @@ module Bitunix
       end
 
       # https://www.bitunix.com/api-docs/futures/account/change_position_mode.html
+      def change_margin_mode(margin_mode, symbol, margin_coin)
+        url = "/api/v1/futures/account/change_margin_mode"
+        data = { "marginMode" => margin_mode.upcase, "symbol" => symbol.upcase, "marginCoin" => margin_coin.upcase }
+        body = JSON.generate(data)
+        headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
+        response = @conn.post(url, data, headers)
+        handle_response(response)
+      end
+
+      # https://www.bitunix.com/api-docs/futures/account/change_position_mode.html
       def change_position_mode(position_mode)
         url = "/api/v1/futures/account/change_position_mode"
         data = { "positionMode" => position_mode }
