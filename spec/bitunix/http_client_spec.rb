@@ -68,5 +68,15 @@ RSpec.describe Bitunix::Rest::Futures do
       res = client.tpsl.cancel_order("BTCUSDT", "12")
       expect(res).to eq("orderId" => "12")
     end
+
+    it "tpsl.get_history_orders returns parsed data" do
+      stub_request(:get, "https://api.example.com/api/v1/futures/tpsl/get_history_orders")
+        .with(query: hash_including("symbol" => "BTCUSDT", "skip" => "0", "limit" => "10"))
+        .to_return(status: 200, body: { code: 0,
+                                        data: [{ "id" => "1", "symbol" => "BTCUSDT" }] }.to_json, headers: { "Content-Type" => "application/json" })
+
+      res = client.tpsl.get_history_orders(symbol: "BTCUSDT")
+      expect(res).to eq([{ "id" => "1", "symbol" => "BTCUSDT" }])
+    end
   end
 end

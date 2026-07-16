@@ -61,6 +61,7 @@ account = private_client.get_account
 
 # TP/SL
 private_client.tpsl.cancel_order("BTCUSDT", "12")
+private_client.tpsl.get_history_orders(symbol: "BTCUSDT")
 
 # Private WebSocket
 ws = Bitunix::WS::Futures::Private.new(config)
@@ -86,7 +87,7 @@ Available via `Bitunix::Rest::Futures::Private`:
 - Account: `get_account`, `change_leverage`, `change_margin_mode`, `change_position_mode`, `adjust_position_margin`
 - Orders: `place_order`, `batch_order`, `cancel_orders`, `cancel_all_orders`, `get_pending_orders`, `get_history_orders`
 - Positions / trades: `get_pending_positions`, `get_history_positions`, `get_history_trades`
-- TP/SL: `tpsl.cancel_order`
+- TP/SL: `tpsl.cancel_order`, `tpsl.get_history_orders`
 
 ## Development
 
