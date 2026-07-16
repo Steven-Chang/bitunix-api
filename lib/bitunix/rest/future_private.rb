@@ -35,6 +35,18 @@ module Bitunix
         data["data"]
       end
 
+      # https://www.bitunix.com/api-docs/futures/account/adjust_position_margin.html
+      def adjust_position_margin(symbol, margin_coin, amount, side: nil, position_id: nil)
+        url = "/api/v1/futures/account/adjust_position_margin"
+        data = { symbol:, amount:, marginCoin: margin_coin }
+        data[:side] = side if side
+        data[:positionId] = position_id if position_id
+        body = JSON.generate(data)
+        headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
+        response = @conn.post(url, data, headers)
+        handle_response(response)
+      end
+
       # https://www.bitunix.com/api-docs/futures/trade/batch_order.html
       def batch_order(symbol, order_list)
         url = "/api/v1/futures/trade/batch_order"
