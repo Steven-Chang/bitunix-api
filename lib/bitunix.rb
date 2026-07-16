@@ -11,11 +11,11 @@ require_relative "bitunix/error_codes"
 require_relative "bitunix/config"
 
 require_relative "bitunix/rest/sign"
-require_relative "bitunix/rest/future_public"
-require_relative "bitunix/rest/future_private"
+require_relative "bitunix/rest/futures"
 
 require_relative "bitunix/ws/sign"
-require_relative "bitunix/ws/future_private"
+require_relative "bitunix/ws/auth"
+require_relative "bitunix/ws/futures"
 
 module Bitunix
   Sign = Rest::Sign

@@ -3,18 +3,19 @@
 require "json"
 require "eventmachine"
 require "websocket-eventmachine-client"
-require_relative "auth"
+require_relative "../auth"
 
 module Bitunix
   module WS
-    # EventMachine-backed WebSocket client for private channels (futures).
-    #
-    # Designed to be safe to use in apps that do or do not already run an EM reactor.
-    # - Starts a reactor thread if none exists.
-    # - Reconnects automatically on close/error.
-    # - Buffers subscribe requests until connected.
-    # - Provides callback hooks: on_open, on_message, on_close, on_error.
-    class FuturePrivate
+    module Futures
+      # EventMachine-backed WebSocket client for private channels (futures).
+      #
+      # Designed to be safe to use in apps that do or do not already run an EM reactor.
+      # - Starts a reactor thread if none exists.
+      # - Reconnects automatically on close/error.
+      # - Buffers subscribe requests until connected.
+      # - Provides callback hooks: on_open, on_message, on_close, on_error.
+      class Private
       DEFAULT_HEARTBEAT_INTERVAL = 3
 
       attr_reader :connected
@@ -267,4 +268,5 @@ module Bitunix
       end
     end
   end
+end
 end
