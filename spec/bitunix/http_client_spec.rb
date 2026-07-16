@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Bitunix::Rest do
+RSpec.describe Bitunix::Rest::Futures do
   let(:tmpfile) do
     f = Tempfile.new(["cfg", ".yaml"])
     f.write({
@@ -16,7 +16,7 @@ RSpec.describe Bitunix::Rest do
 
   let(:config) { Bitunix::Config.new(tmpfile) }
 
-  describe Bitunix::Rest::FuturePublic do
+  describe Bitunix::Rest::Futures::Public do
     let(:client) { described_class.new(config) }
 
     it "get_tickers returns parsed data when API responds with code 0" do
@@ -37,7 +37,7 @@ RSpec.describe Bitunix::Rest do
     end
   end
 
-  describe Bitunix::Rest::FuturePrivate do
+  describe Bitunix::Rest::Futures::Private do
     let(:client) { described_class.new(config) }
 
     it "get_account returns parsed data" do
@@ -57,6 +57,16 @@ RSpec.describe Bitunix::Rest do
 
       res = client.place_order(symbol: "BTCUSDT", side: "BUY", order_type: "LIMIT", qty: "1", price: "100")
       expect(res).to eq("orderId" => "abc")
+    end
+
+    it "tpsl.cancel_order posts data and returns result" do
+      stub_request(:post, "https://api.example.com/api/v1/futures/tpsl/cancel_order")
+        .with(body: hash_including("symbol" => "BTCUSDT", "orderId" => "12"))
+        .to_return(status: 200, body: { code: 0,
+                                        data: { "orderId" => "12" } }.to_json, headers: { "Content-Type" => "application/json" })
+
+      res = client.tpsl.cancel_order("BTCUSDT", "12")
+      expect(res).to eq("orderId" => "12")
     end
   end
 end

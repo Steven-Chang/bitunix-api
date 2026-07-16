@@ -4,8 +4,8 @@ Ruby client for the [Bitunix Open API](https://openapidoc.bitunix.com/), focused
 
 It provides:
 - Config: load credentials and endpoints from YAML (`Bitunix::Config`)
-- REST clients: `Bitunix::Rest::FuturePublic` and `Bitunix::Rest::FuturePrivate`
-- WebSocket client: `Bitunix::WS::FuturePrivate` (EventMachine-backed)
+- REST clients: `Bitunix::Rest::Futures::Public` and `Bitunix::Rest::Futures::Private`
+- WebSocket client: `Bitunix::WS::Futures::Private` (EventMachine-backed)
 - Signing utilities: `Bitunix::Sign`
 
 Requires Ruby >= 3.2.1.
@@ -51,22 +51,27 @@ require "bitunix-api"
 config = Bitunix::Config.new("config.yaml")
 
 # Public REST
-public_client = Bitunix::Rest::FuturePublic.new(config)
+public_client = Bitunix::Rest::Futures::Public.new(config)
 tickers = public_client.get_tickers("BTCUSDT,ETHUSDT")
 
 # Private REST (config or api_key + secret_key)
-private_client = Bitunix::Rest::FuturePrivate.new(config)
+private_client = Bitunix::Rest::Futures::Private.new(config)
 account = private_client.get_account
-# private_client = Bitunix::Rest::FuturePrivate.new("YOUR_API_KEY", "YOUR_SECRET_KEY")
+# private_client = Bitunix::Rest::Futures::Private.new("YOUR_API_KEY", "YOUR_SECRET_KEY")
+
+# TP/SL
+private_client.tpsl.cancel_order("BTCUSDT", "12")
 
 # Private WebSocket
-ws = Bitunix::WS::FuturePrivate.new(config)
+ws = Bitunix::WS::Futures::Private.new(config)
 ws.on_message { |msg| puts msg }
 ws.connect
 ws.subscribe([{ "ch" => "balance" }, { "ch" => "position" }])
 ```
 
 ### Public REST helpers
+
+Available via `Bitunix::Rest::Futures::Public`:
 
 - `get_tickers`
 - `get_trading_pairs`
@@ -76,9 +81,12 @@ ws.subscribe([{ "ch" => "balance" }, { "ch" => "position" }])
 
 ### Private REST helpers
 
-- Account: `get_account`, `change_leverage`, `change_margin_mode`, `change_position_mode`
+Available via `Bitunix::Rest::Futures::Private`:
+
+- Account: `get_account`, `change_leverage`, `change_margin_mode`, `change_position_mode`, `adjust_position_margin`
 - Orders: `place_order`, `batch_order`, `cancel_orders`, `cancel_all_orders`, `get_pending_orders`, `get_history_orders`
 - Positions / trades: `get_pending_positions`, `get_history_positions`, `get_history_trades`
+- TP/SL: `tpsl.cancel_order`
 
 ## Development
 
@@ -92,6 +100,7 @@ bundle exec rubocop
 - This is a thin client around Bitunix futures endpoints. Harden for production as needed (timeouts, retries, logging).
 - Error codes live in `lib/bitunix/error_codes.rb`.
 - WebSocket uses EventMachine via `websocket-eventmachine-client` (auto-starts a reactor thread when needed).
+- A successful REST response does not always mean the operation succeeded. For order-related actions, use WebSocket push messages to confirm the final state.
 
 ## References
 

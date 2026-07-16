@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe Bitunix::WS::FuturePrivate do
+RSpec.describe Bitunix::WS::Futures::Private do
   let(:tmpfile) do
     f = Tempfile.new(["cfg", ".yaml"])
     f.write({
