@@ -12,6 +12,7 @@ require_relative "bitunix/errors"
 require_relative "bitunix/config"
 
 require_relative "bitunix/rest/sign"
+require_relative "bitunix/rest/json_body"
 require_relative "bitunix/rest/futures"
 
 require_relative "bitunix/ws/sign"

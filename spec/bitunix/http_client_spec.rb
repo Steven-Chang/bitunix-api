@@ -82,8 +82,15 @@ RSpec.describe Bitunix::Rest::Futures do
         "price" => "100",
         "qty" => "1",
         "orderType" => "LIMIT",
+        "reduceOnly" => true
+      }]
+      expected_order_list = [{
+        "side" => "BUY",
+        "price" => "100",
+        "qty" => "1",
+        "orderType" => "LIMIT",
         "effect" => "GTC",
-        "reduceOnly" => false
+        "reduceOnly" => true
       }]
 
       stub_request(:post, "https://api.example.com/api/v1/futures/trade/batch_order")
@@ -91,7 +98,7 @@ RSpec.describe Bitunix::Rest::Futures do
           body = JSON.parse(req.body)
           body["symbol"] == "BTCUSDT" &&
             body["marginCoin"] == "USDT" &&
-            body["orderList"] == order_list &&
+            body["orderList"] == expected_order_list &&
             req.headers["Content-Type"]&.include?("application/json")
         }
         .to_return(status: 200, body: { code: 0,
@@ -101,6 +108,30 @@ RSpec.describe Bitunix::Rest::Futures do
 
       res = client.batch_order("BTCUSDT", order_list, "USDT")
       expect(res).to eq("successList" => [{ "id" => "1" }], "failureList" => [])
+    end
+
+    it "batch_order normalizes ActionController-like params before signing" do
+      order = Object.new
+      def order.to_unsafe_h
+        { side: "BUY", price: "100", qty: "1", orderType: "LIMIT", reduceOnly: "true" }
+      end
+
+      stub_request(:post, "https://api.example.com/api/v1/futures/trade/batch_order")
+        .with { |req|
+          body = JSON.parse(req.body)
+          body["orderList"] == [{
+            "side" => "BUY",
+            "price" => "100",
+            "qty" => "1",
+            "orderType" => "LIMIT",
+            "effect" => "GTC",
+            "reduceOnly" => true
+          }]
+        }
+        .to_return(status: 200, body: { code: 0, data: { "successList" => [] } }.to_json,
+                   headers: { "Content-Type" => "application/json" })
+
+      expect(client.batch_order("BTCUSDT", [order], "USDT")).to eq("successList" => [])
     end
 
     it "tpsl.cancel_order posts data and returns result" do

@@ -38,12 +38,13 @@ module Bitunix
   
         # https://www.bitunix.com/api-docs/futures/trade/batch_order.html
         # marginCoin is required by the API (undocumented on the batch_order page).
+        # order_list may be Rails ActionController::Parameters; it is normalized before signing.
         def batch_order(symbol, order_list, margin_coin)
           url = "/api/v1/futures/trade/batch_order"
           data = {
             "symbol" => symbol,
             "marginCoin" => margin_coin,
-            "orderList" => order_list
+            "orderList" => JsonBody.normalize_batch_order_list(order_list)
           }
 
           body = JSON.generate(data)
