@@ -16,13 +16,10 @@ module Bitunix
         end
 
         def handle_response(response)
-          raise "HTTP Error: #{response.status}" unless response.status == 200
+          raise HttpError.new(response.status, response.body) unless response.status == 200
 
           data = JSON.parse(response.body)
-          if data["code"] != 0
-            error = ErrorCode.get_by_code(data["code"])
-            raise error || "Unknown Error: #{data["code"]} - #{data["msg"]}"
-          end
+          raise ApiError, data if data["code"] != 0
 
           data["data"]
         end

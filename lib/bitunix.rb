@@ -8,6 +8,7 @@ require "time"
 
 require_relative "bitunix/version"
 require_relative "bitunix/error_codes"
+require_relative "bitunix/errors"
 require_relative "bitunix/config"
 
 require_relative "bitunix/rest/sign"

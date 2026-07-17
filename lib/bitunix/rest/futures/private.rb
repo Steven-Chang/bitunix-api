@@ -24,18 +24,6 @@ module Bitunix
           end
         end
   
-        def handle_response(response)
-          raise "HTTP Error: #{response.status}" unless response.status == 200
-  
-          data = JSON.parse(response.body)
-          if data["code"] != 0
-            error = ErrorCode.get_by_code(data["code"])
-            raise error || "Unknown Error: #{data["code"]} - #{data["msg"]}"
-          end
-  
-          data["data"]
-        end
-  
         # https://www.bitunix.com/api-docs/futures/account/adjust_position_margin.html
         def adjust_position_margin(symbol, margin_coin, amount, side: nil, position_id: nil)
           url = "/api/v1/futures/account/adjust_position_margin"
@@ -49,16 +37,18 @@ module Bitunix
         end
   
         # https://www.bitunix.com/api-docs/futures/trade/batch_order.html
-        def batch_order(symbol, order_list)
+        # marginCoin is required by the API (undocumented on the batch_order page).
+        def batch_order(symbol, order_list, margin_coin)
           url = "/api/v1/futures/trade/batch_order"
           data = {
             "symbol" => symbol,
+            "marginCoin" => margin_coin,
             "orderList" => order_list
           }
-  
+
           body = JSON.generate(data)
           headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
-          response = @conn.post(url, data, headers)
+          response = @conn.post(url, body, headers.merge("Content-Type" => "application/json"))
           handle_response(response)
         end
   

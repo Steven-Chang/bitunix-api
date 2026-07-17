@@ -5,6 +5,7 @@ require "spec_helper"
 RSpec.describe Bitunix::ErrorCode do
   describe ".get_by_code" do
     it "returns the message for a known code" do
+      expect(Bitunix::ErrorCode.get_by_code(2)).to eq("Required parameter is missing or null")
       expect(Bitunix::ErrorCode.get_by_code(10_001)).to eq("Network Error")
       expect(Bitunix::ErrorCode.get_by_code(20_003)).to eq("Insufficient balance")
       expect(Bitunix::ErrorCode.get_by_code(30_042)).to eq("Client ID duplicate")

@@ -6,6 +6,7 @@ module Bitunix
     MAPPING = {
       # General error codes (10000-10099)
       0 => "Success",
+      2 => "Required parameter is missing or null",
       10_001 => "Network Error",
       10_002 => "Parameter Error",
       10_003 => "api-key can't be empty",

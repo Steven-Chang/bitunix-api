@@ -33,7 +33,24 @@ RSpec.describe Bitunix::Rest::Futures do
       stub_request(:get, "https://api.example.com/api/v1/futures/market/tickers")
         .to_return(status: 500, body: "server error")
 
-      expect { client.get_tickers }.to raise_error(RuntimeError, /HTTP Error:/)
+      expect { client.get_tickers }.to raise_error(Bitunix::HttpError, /HTTP Error: 500/)
+    end
+
+    it "raises ApiError with code, msg and data from the response" do
+      stub_request(:get, "https://api.example.com/api/v1/futures/market/tickers")
+        .to_return(status: 200,
+                   body: { code: 2, data: nil, msg: "must not be null" }.to_json,
+                   headers: { "Content-Type" => "application/json" })
+
+      expect { client.get_tickers }.to raise_error do |error|
+        expect(error).to be_a(Bitunix::ApiError)
+        expect(error.code).to eq(2)
+        expect(error.msg).to eq("must not be null")
+        expect(error.data).to be_nil
+        expect(error.message).to include("2")
+        expect(error.message).to include("must not be null")
+        expect(error.message).to include("Required parameter is missing or null")
+      end
     end
   end
 
@@ -57,6 +74,33 @@ RSpec.describe Bitunix::Rest::Futures do
 
       res = client.place_order(symbol: "BTCUSDT", side: "BUY", order_type: "LIMIT", qty: "1", price: "100")
       expect(res).to eq("orderId" => "abc")
+    end
+
+    it "batch_order posts symbol, marginCoin and orderList" do
+      order_list = [{
+        "side" => "BUY",
+        "price" => "100",
+        "qty" => "1",
+        "orderType" => "LIMIT",
+        "effect" => "GTC",
+        "reduceOnly" => false
+      }]
+
+      stub_request(:post, "https://api.example.com/api/v1/futures/trade/batch_order")
+        .with { |req|
+          body = JSON.parse(req.body)
+          body["symbol"] == "BTCUSDT" &&
+            body["marginCoin"] == "USDT" &&
+            body["orderList"] == order_list &&
+            req.headers["Content-Type"]&.include?("application/json")
+        }
+        .to_return(status: 200, body: { code: 0,
+                                        data: { "successList" => [{ "id" => "1" }],
+                                                "failureList" => [] } }.to_json,
+                   headers: { "Content-Type" => "application/json" })
+
+      res = client.batch_order("BTCUSDT", order_list, "USDT")
+      expect(res).to eq("successList" => [{ "id" => "1" }], "failureList" => [])
     end
 
     it "tpsl.cancel_order posts data and returns result" do
