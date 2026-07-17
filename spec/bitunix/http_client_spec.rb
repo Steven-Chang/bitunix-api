@@ -78,5 +78,55 @@ RSpec.describe Bitunix::Rest::Futures do
       res = client.tpsl.get_history_orders(symbol: "BTCUSDT")
       expect(res).to eq([{ "id" => "1", "symbol" => "BTCUSDT" }])
     end
+
+    it "tpsl.get_pending_orders returns parsed data" do
+      stub_request(:get, "https://api.example.com/api/v1/futures/tpsl/get_pending_orders")
+        .with(query: hash_including("symbol" => "BTCUSDT", "skip" => "0", "limit" => "10"))
+        .to_return(status: 200, body: { code: 0,
+                                        data: [{ "id" => "123", "symbol" => "BTCUSDT" }] }.to_json, headers: { "Content-Type" => "application/json" })
+
+      res = client.tpsl.get_pending_orders(symbol: "BTCUSDT")
+      expect(res).to eq([{ "id" => "123", "symbol" => "BTCUSDT" }])
+    end
+
+    it "tpsl.position_modify_order posts data and returns result" do
+      stub_request(:post, "https://api.example.com/api/v1/futures/tpsl/position/modify_order")
+        .with(body: hash_including("symbol" => "BTCUSDT", "positionId" => "11", "tpPrice" => "12"))
+        .to_return(status: 200, body: { code: 0,
+                                        data: { "orderId" => "11111" } }.to_json, headers: { "Content-Type" => "application/json" })
+
+      res = client.tpsl.position_modify_order("BTCUSDT", "11", tp_price: "12", tp_stop_type: "LAST_PRICE")
+      expect(res).to eq("orderId" => "11111")
+    end
+
+    it "tpsl.modify_order posts data and returns result" do
+      stub_request(:post, "https://api.example.com/api/v1/futures/tpsl/modify_order")
+        .with(body: hash_including("orderId" => "123", "tpPrice" => "12", "slPrice" => "9"))
+        .to_return(status: 200, body: { code: 0,
+                                        data: { "orderId" => "123" } }.to_json, headers: { "Content-Type" => "application/json" })
+
+      res = client.tpsl.modify_order("123", tp_price: "12", sl_price: "9", tp_qty: "1", sl_qty: "1")
+      expect(res).to eq("orderId" => "123")
+    end
+
+    it "tpsl.position_place_order posts data and returns result" do
+      stub_request(:post, "https://api.example.com/api/v1/futures/tpsl/position/place_order")
+        .with(body: hash_including("symbol" => "BTCUSDT", "positionId" => "111", "tpPrice" => "12"))
+        .to_return(status: 200, body: { code: 0,
+                                        data: { "orderId" => "11111" } }.to_json, headers: { "Content-Type" => "application/json" })
+
+      res = client.tpsl.position_place_order("BTCUSDT", "111", tp_price: "12", sl_price: "9")
+      expect(res).to eq("orderId" => "11111")
+    end
+
+    it "tpsl.place_order posts data and returns result" do
+      stub_request(:post, "https://api.example.com/api/v1/futures/tpsl/place_order")
+        .with(body: hash_including("symbol" => "BTCUSDT", "positionId" => "111", "tpQty" => "1", "slQty" => "1"))
+        .to_return(status: 200, body: { code: 0,
+                                        data: { "orderId" => "11111" } }.to_json, headers: { "Content-Type" => "application/json" })
+
+      res = client.tpsl.place_order("BTCUSDT", "111", tp_price: "12", sl_price: "9", tp_qty: "1", sl_qty: "1")
+      expect(res).to eq("orderId" => "11111")
+    end
   end
 end
