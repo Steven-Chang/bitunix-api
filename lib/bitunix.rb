@@ -15,6 +15,7 @@ require_relative "bitunix/rest/sign"
 require_relative "bitunix/rest/json_body"
 require_relative "bitunix/rest/futures"
 require_relative "bitunix/rest/spot"
+require_relative "bitunix/client"
 
 require_relative "bitunix/ws/sign"
 require_relative "bitunix/ws/auth"

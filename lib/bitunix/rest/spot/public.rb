@@ -8,7 +8,7 @@ module Bitunix
     module Spot
       class Public
         def initialize(config = nil)
-          base_url = config&.uri_prefix || "https://openapi.bitunix.com"
+          base_url = config&.spot_uri_prefix || Config::DEFAULT_SPOT_URI
           @conn = Faraday.new(url: base_url) do |f|
             f.request :json
             f.adapter Faraday.default_adapter

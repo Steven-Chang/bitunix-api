@@ -4,7 +4,11 @@ require "yaml"
 
 module Bitunix
   class Config
-    attr_reader :api_key, :secret_key, :public_ws_uri, :private_ws_uri, :reconnect_interval, :uri_prefix
+    DEFAULT_FUTURES_URI = "https://fapi.bitunix.com"
+    DEFAULT_SPOT_URI = "https://openapi.bitunix.com"
+
+    attr_reader :api_key, :secret_key, :public_ws_uri, :private_ws_uri, :reconnect_interval,
+                :uri_prefix, :futures_uri_prefix, :spot_uri_prefix
 
     def initialize(path)
       raw = YAML.load_file(path)
@@ -19,7 +23,10 @@ module Bitunix
       @public_ws_uri = websocket["public_uri"]
       @private_ws_uri = websocket["private_uri"]
       @reconnect_interval = websocket["reconnect_interval"]
-      @uri_prefix = http["uri_prefix"] || "https://fapi.bitunix.com"
+      @futures_uri_prefix = http["futures_uri_prefix"] || http["uri_prefix"] || DEFAULT_FUTURES_URI
+      @spot_uri_prefix = http["spot_uri_prefix"] || DEFAULT_SPOT_URI
+      # Backward-compatible alias for the futures REST base URL.
+      @uri_prefix = @futures_uri_prefix
     end
 
     def get(path)

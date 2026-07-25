@@ -30,10 +30,39 @@ RSpec.describe Bitunix::Config do
     expect(cfg.public_ws_uri).to eq("wss://pub")
     expect(cfg.private_ws_uri).to eq("wss://priv")
     expect(cfg.uri_prefix).to eq("https://api.example.com")
+    expect(cfg.futures_uri_prefix).to eq("https://api.example.com")
+    expect(cfg.spot_uri_prefix).to eq("https://openapi.bitunix.com")
     expect(cfg.reconnect_interval).to eq(7)
 
     # get with nested key
     expect(cfg.get("websocket.private_uri")).to eq("wss://priv")
+    File.delete(path)
+  end
+
+  it "prefers futures_uri_prefix and spot_uri_prefix when present" do
+    path = write_temp_config(
+      "credentials" => { "api_key" => "k", "secret_key" => "s" },
+      "http" => {
+        "uri_prefix" => "https://legacy.example.com",
+        "futures_uri_prefix" => "https://futures.example.com",
+        "spot_uri_prefix" => "https://spot.example.com"
+      }
+    )
+    cfg = Bitunix::Config.new(path)
+
+    expect(cfg.futures_uri_prefix).to eq("https://futures.example.com")
+    expect(cfg.uri_prefix).to eq("https://futures.example.com")
+    expect(cfg.spot_uri_prefix).to eq("https://spot.example.com")
+    File.delete(path)
+  end
+
+  it "defaults futures and spot URIs when http section is omitted" do
+    path = write_temp_config("credentials" => { "api_key" => "k", "secret_key" => "s" })
+    cfg = Bitunix::Config.new(path)
+
+    expect(cfg.futures_uri_prefix).to eq("https://fapi.bitunix.com")
+    expect(cfg.uri_prefix).to eq("https://fapi.bitunix.com")
+    expect(cfg.spot_uri_prefix).to eq("https://openapi.bitunix.com")
     File.delete(path)
   end
 
