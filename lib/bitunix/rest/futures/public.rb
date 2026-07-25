@@ -8,7 +8,7 @@ module Bitunix
     module Futures
       class Public
         def initialize(config = nil)
-          base_url = config&.uri_prefix || "https://fapi.bitunix.com"
+          base_url = config&.futures_uri_prefix || config&.uri_prefix || Config::DEFAULT_FUTURES_URI
           @conn = Faraday.new(url: base_url) do |f|
             f.request :json
             f.adapter Faraday.default_adapter

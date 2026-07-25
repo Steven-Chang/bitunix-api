@@ -11,11 +11,11 @@ module Bitunix
           if config_or_api_key.respond_to?(:api_key) && config_or_api_key.respond_to?(:secret_key)
             @api_key = config_or_api_key.api_key
             @secret_key = config_or_api_key.secret_key
-            @base_url = config_or_api_key.uri_prefix || "https://fapi.bitunix.com"
+            @base_url = config_or_api_key.futures_uri_prefix || config_or_api_key.uri_prefix || Config::DEFAULT_FUTURES_URI
           else
             @api_key = config_or_api_key
             @secret_key = secret_key
-            @base_url = "https://fapi.bitunix.com"
+            @base_url = Config::DEFAULT_FUTURES_URI
           end
   
           @conn = Faraday.new(url: @base_url) do |f|
