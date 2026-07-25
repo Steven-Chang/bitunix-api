@@ -16,17 +16,15 @@ Requires Ruby >= 3.2.1.
 **Version 2** (unified client + spot):
 
 ```ruby
-gem "bitunix-api", git: "https://github.com/Steven-Chang/bitunix-api", branch: "version-2"
-# after release, prefer a tag:
-# gem "bitunix-api", git: "https://github.com/Steven-Chang/bitunix-api", tag: "v2.0.0"
+gem "bitunix-api", git: "https://github.com/Steven-Chang/bitunix-api", tag: "v2.0.0"
 ```
 
-**Stay on 0.x** (futures-only API, no unified client) — pin a pre-2.0 commit or tag so `master` merges cannot pull you onto 2.x:
+**Stay on 0.x** (futures-only API, no unified client):
 
 ```ruby
-gem "bitunix-api", git: "https://github.com/Steven-Chang/bitunix-api", ref: "ddda63a"
-# once tagged: tag: "v0.1.0"
+gem "bitunix-api", git: "https://github.com/Steven-Chang/bitunix-api", tag: "v0.1.0"
 ```
+
 Or for local development:
 
 ```bash
