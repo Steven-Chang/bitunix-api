@@ -1,6 +1,6 @@
 # bitunix-api
 
-Ruby client for the [Bitunix Open API](https://openapidoc.bitunix.com/) — **v2.0.0**.
+Ruby client for the [Bitunix Open API](https://openapidoc.bitunix.com/) — **v2.1.0**.
 
 It provides:
 - Config: load credentials and endpoints from YAML (`Bitunix::Config`)
@@ -16,7 +16,7 @@ Requires Ruby >= 3.2.1.
 **Version 2** (unified client + spot):
 
 ```ruby
-gem "bitunix-api", git: "https://github.com/Steven-Chang/bitunix-api", tag: "v2.0.0"
+gem "bitunix-api", git: "https://github.com/Steven-Chang/bitunix-api", tag: "v2.1.0"
 ```
 
 **Stay on 0.x** (futures-only API, no unified client):

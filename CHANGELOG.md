@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0
+
+### Added
+- Futures private REST: `get_leverage_and_margin_mode`
+
 ## 2.0.0
 
 Unified REST client and spot support. Existing `Bitunix::Rest::Futures::*` callers keep working.
