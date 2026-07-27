@@ -130,7 +130,7 @@ Available via `client.futures` / `Bitunix::Rest::Futures::Public`:
 
 Available via `client.futures` / `Bitunix::Rest::Futures::Private`:
 
-- Account: `get_account`, `change_leverage`, `change_margin_mode`, `change_position_mode`, `adjust_position_margin`
+- Account: `get_account`, `get_leverage_and_margin_mode`, `change_leverage`, `change_margin_mode`, `change_position_mode`, `adjust_position_margin`
 - Orders: `place_order`, `batch_order`, `cancel_orders`, `cancel_all_orders`, `get_pending_orders`, `get_history_orders`
 - Positions / trades: `get_pending_positions`, `get_history_positions`, `get_history_trades`
 - TP/SL: `tpsl.cancel_order`, `tpsl.get_history_orders`, `tpsl.get_pending_orders`, `tpsl.place_order`, `tpsl.position_place_order`, `tpsl.modify_order`, `tpsl.position_modify_order`

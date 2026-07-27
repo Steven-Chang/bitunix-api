@@ -61,6 +61,16 @@ module Bitunix
           response = @conn.get(url, params, headers)
           handle_response(response)
         end
+
+        # https://www.bitunix.com/api-docs/futures/account/get_leverage_and_margin_mode.html
+        def get_leverage_and_margin_mode(symbol, margin_coin = "USDT")
+          url = "/api/v1/futures/account/get_leverage_margin_mode"
+          params = { "symbol" => symbol, "marginCoin" => margin_coin }
+          query_string = Sign.sort_params(params)
+          headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, query_params: query_string)
+          response = @conn.get(url, params, headers)
+          handle_response(response)
+        end
   
         def place_order(symbol:, side:, order_type:, qty:, price: nil, position_id: nil, trade_side: "OPEN",
                         effect: "GTC", reduce_only: false, client_id: nil, tp_price: nil, tp_stop_type: nil, tp_order_type: nil, tp_order_price: nil)

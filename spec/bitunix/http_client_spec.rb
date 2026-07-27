@@ -67,6 +67,19 @@ RSpec.describe Bitunix::Rest::Futures do
       expect(result).to eq("balance" => 100)
     end
 
+    it "get_leverage_and_margin_mode returns parsed data" do
+      stub_request(:get, "https://api.example.com/api/v1/futures/account/get_leverage_margin_mode")
+        .with(query: hash_including("symbol" => "BTCUSDT", "marginCoin" => "USDT"))
+        .to_return(status: 200, body: { code: 0,
+                                        data: { "symbol" => "BTCUSDT", "marginCoin" => "USDT",
+                                                "leverage" => 10, "marginMode" => "ISOLATION" } }.to_json,
+                   headers: { "Content-Type" => "application/json" })
+
+      result = client.get_leverage_and_margin_mode("BTCUSDT")
+      expect(result).to eq("symbol" => "BTCUSDT", "marginCoin" => "USDT", "leverage" => 10,
+                           "marginMode" => "ISOLATION")
+    end
+
     it "place_order posts data and returns result" do
       stub_request(:post, "https://api.example.com/api/v1/futures/trade/place_order")
         .to_return(status: 200, body: { code: 0,
