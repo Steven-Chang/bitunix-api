@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.2.0
+
+### Added
+- Futures public WebSocket: `Bitunix::WS::Futures::Public` (connects to `websocket.public_uri`, no login)
+
+### Changed
+- Shared futures WebSocket connection logic extracted to `Bitunix::WS::Futures::Base`
+
 ## 2.1.0
 
 ### Added

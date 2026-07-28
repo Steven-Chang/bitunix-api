@@ -1,12 +1,12 @@
 # bitunix-api
 
-Ruby client for the [Bitunix Open API](https://openapidoc.bitunix.com/) — **v2.1.0**.
+Ruby client for the [Bitunix Open API](https://openapidoc.bitunix.com/) — **v2.2.0**.
 
 It provides:
 - Config: load credentials and endpoints from YAML (`Bitunix::Config`)
 - Unified REST client: `Bitunix::Client` with `futures` and `spot` namespaces
 - REST clients: `Bitunix::Rest::Futures::*` and `Bitunix::Rest::Spot::*` (also usable directly)
-- WebSocket client: `Bitunix::WS::Futures::Private` (EventMachine-backed)
+- WebSocket clients: `Bitunix::WS::Futures::Public` and `Bitunix::WS::Futures::Private` (EventMachine-backed)
 - Signing utilities: `Bitunix::Sign`
 
 Requires Ruby >= 3.2.1.
@@ -16,7 +16,7 @@ Requires Ruby >= 3.2.1.
 **Version 2** (unified client + spot):
 
 ```ruby
-gem "bitunix-api", git: "https://github.com/Steven-Chang/bitunix-api", tag: "v2.1.0"
+gem "bitunix-api", git: "https://github.com/Steven-Chang/bitunix-api", tag: "v2.2.0"
 ```
 
 **Stay on 0.x** (futures-only API, no unified client):
@@ -109,11 +109,20 @@ public_client = Bitunix::Rest::Futures::Public.new(config)
 private_client = Bitunix::Rest::Futures::Private.new(config)
 # private_client = Bitunix::Rest::Futures::Private.new("YOUR_API_KEY", "YOUR_SECRET_KEY")
 
-# Private WebSocket
-ws = Bitunix::WS::Futures::Private.new(config)
-ws.on_message { |msg| puts msg }
-ws.connect
-ws.subscribe([{ "ch" => "balance" }, { "ch" => "position" }])
+# Public WebSocket (market data — no login)
+public_ws = Bitunix::WS::Futures::Public.new(config)
+public_ws.on_message { |msg| puts msg }
+public_ws.connect
+public_ws.subscribe([
+  { "symbol" => "BTCUSDT", "ch" => "market_kline_1min" },
+  { "symbol" => "BTCUSDT", "ch" => "depth_books" }
+])
+
+# Private WebSocket (account streams — signed login on connect)
+private_ws = Bitunix::WS::Futures::Private.new(config)
+private_ws.on_message { |msg| puts msg }
+private_ws.connect
+private_ws.subscribe([{ "ch" => "balance" }, { "ch" => "position" }])
 ```
 
 ### Futures public REST helpers
