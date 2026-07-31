@@ -1,10 +1,14 @@
 # Changelog
 
+## 2.3.0
+
+### Added
+- Futures private REST `place_order`: stop-loss params (`sl_price`, `sl_stop_type`, `sl_order_type`, `sl_order_price`)
+
 ## 2.2.0
 
 ### Added
 - Futures public WebSocket: `Bitunix::WS::Futures::Public` (connects to `websocket.public_uri`, no login)
-- Futures private REST `place_order`: stop-loss params (`sl_price`, `sl_stop_type`, `sl_order_type`, `sl_order_price`)
 
 ### Changed
 - Shared futures WebSocket connection logic extracted to `Bitunix::WS::Futures::Base`
