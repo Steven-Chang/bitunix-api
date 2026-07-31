@@ -82,10 +82,46 @@ RSpec.describe Bitunix::Rest::Futures do
 
     it "place_order posts data and returns result" do
       stub_request(:post, "https://api.example.com/api/v1/futures/trade/place_order")
+        .with(body: hash_including(
+          "symbol" => "BTCUSDT",
+          "side" => "BUY",
+          "orderType" => "LIMIT",
+          "qty" => "1",
+          "price" => "100",
+          "tradeSide" => "OPEN",
+          "effect" => "GTC",
+          "reduceOnly" => false,
+          "clientId" => "cid-1",
+          "positionId" => "111",
+          "tpPrice" => "61000",
+          "tpStopType" => "MARK_PRICE",
+          "tpOrderType" => "LIMIT",
+          "tpOrderPrice" => "61000.1",
+          "slPrice" => "59000",
+          "slStopType" => "LAST_PRICE",
+          "slOrderType" => "MARKET",
+          "slOrderPrice" => "58900"
+        ))
         .to_return(status: 200, body: { code: 0,
                                         data: { "orderId" => "abc" } }.to_json, headers: { "Content-Type" => "application/json" })
 
-      res = client.place_order(symbol: "BTCUSDT", side: "BUY", order_type: "LIMIT", qty: "1", price: "100")
+      res = client.place_order(
+        symbol: "BTCUSDT",
+        side: "BUY",
+        order_type: "LIMIT",
+        qty: "1",
+        price: "100",
+        position_id: "111",
+        client_id: "cid-1",
+        tp_price: "61000",
+        tp_stop_type: "MARK_PRICE",
+        tp_order_type: "LIMIT",
+        tp_order_price: "61000.1",
+        sl_price: "59000",
+        sl_stop_type: "LAST_PRICE",
+        sl_order_type: "MARKET",
+        sl_order_price: "58900"
+      )
       expect(res).to eq("orderId" => "abc")
     end
 

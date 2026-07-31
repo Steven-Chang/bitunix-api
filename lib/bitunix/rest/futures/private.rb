@@ -72,8 +72,11 @@ module Bitunix
           handle_response(response)
         end
   
+        # https://www.bitunix.com/api-docs/futures/trade/place_order.html
         def place_order(symbol:, side:, order_type:, qty:, price: nil, position_id: nil, trade_side: "OPEN",
-                        effect: "GTC", reduce_only: false, client_id: nil, tp_price: nil, tp_stop_type: nil, tp_order_type: nil, tp_order_price: nil)
+                        effect: "GTC", reduce_only: false, client_id: nil,
+                        tp_price: nil, tp_stop_type: nil, tp_order_type: nil, tp_order_price: nil,
+                        sl_price: nil, sl_stop_type: nil, sl_order_type: nil, sl_order_price: nil)
           url = "/api/v1/futures/trade/place_order"
           data = {
             "symbol" => symbol,
@@ -91,7 +94,11 @@ module Bitunix
           data["tpStopType"] = tp_stop_type if tp_stop_type
           data["tpOrderType"] = tp_order_type if tp_order_type
           data["tpOrderPrice"] = tp_order_price if tp_order_price
-  
+          data["slPrice"] = sl_price if sl_price
+          data["slStopType"] = sl_stop_type if sl_stop_type
+          data["slOrderType"] = sl_order_type if sl_order_type
+          data["slOrderPrice"] = sl_order_price if sl_order_price
+
           body = JSON.generate(data)
           headers = Sign.get_auth_headers(api_key: @api_key, secret_key: @secret_key, body: body)
           response = @conn.post(url, data, headers)
