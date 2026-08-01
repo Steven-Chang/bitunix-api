@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.0
+
+### Changed
+- Futures private REST `place_order`: default `trade_side` is now `nil` (omit from request unless set; required only in hedge mode)
+
 ## 2.3.0
 
 ### Added

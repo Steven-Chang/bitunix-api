@@ -73,7 +73,7 @@ module Bitunix
         end
   
         # https://www.bitunix.com/api-docs/futures/trade/place_order.html
-        def place_order(symbol:, side:, order_type:, qty:, price: nil, position_id: nil, trade_side: "OPEN",
+        def place_order(symbol:, side:, order_type:, qty:, price: nil, position_id: nil, trade_side: nil,
                         effect: "GTC", reduce_only: false, client_id: nil,
                         tp_price: nil, tp_stop_type: nil, tp_order_type: nil, tp_order_price: nil,
                         sl_price: nil, sl_stop_type: nil, sl_order_type: nil, sl_order_price: nil)
@@ -83,12 +83,12 @@ module Bitunix
             "side" => side,
             "orderType" => order_type,
             "qty" => qty,
-            "tradeSide" => trade_side,
             "effect" => effect,
             "reduceOnly" => reduce_only
           }
           data["price"] = price if price
           data["positionId"] = position_id if position_id
+          data["tradeSide"] = trade_side if trade_side
           data["clientId"] = client_id if client_id
           data["tpPrice"] = tp_price if tp_price
           data["tpStopType"] = tp_stop_type if tp_stop_type

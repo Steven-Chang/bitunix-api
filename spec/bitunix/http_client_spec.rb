@@ -111,6 +111,7 @@ RSpec.describe Bitunix::Rest::Futures do
         order_type: "LIMIT",
         qty: "1",
         price: "100",
+        trade_side: "OPEN",
         position_id: "111",
         client_id: "cid-1",
         tp_price: "61000",
